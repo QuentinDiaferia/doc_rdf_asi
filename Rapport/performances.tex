@@ -22,7 +22,7 @@ Dans notre cas, nous obtenons une réussite de 84 \%.
 \paragraph{}
 Une matrice de confusion nous permet de savoir les erreurs commises par notre programme Matlab. En effet, grâce à elle, nous pouvons visualiser quelles sont 
 les classes confondues par d'autres. Dans cette matrice, chaque valeur C(i, j) correspond au nombre de caractère de la classe i ont été confondu avec un. 
-caractère de la classe j.
+caractère de la classe j. Pour un taux de réussite optimal, seule la diagonale de cette matrice doit posséder des coefficients non-nuls.
 \\
 \begin{lstlisting}
 confusion = zeros(10,10);

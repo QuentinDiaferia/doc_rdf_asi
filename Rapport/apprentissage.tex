@@ -8,6 +8,8 @@ les différents caractères de l'image est fournie par le sujet.
 \paragraph{}
 Nous avons choisi de nous intéresser à la méthode du zoning utilisant les densités de pixels. Pour cela, nous avons développé la fonction extraitDensite 
 ci-dessous.
+Nous avons traité le problème de la taille des imagettes en ajoutant du blanc à droite et en bas de l'image afin d'obtenir des dimensions nous permettant de définir les zones souhaitées.
+Notre programme a rapporté de meilleurs résultats en découpant nos images avec une grille carrée de dimension 6, en testant avec des valeurs allant de 4 à 9.
 \\
 \begin{lstlisting}
 function [ densites ] = extraitDensite(img, n, m)
