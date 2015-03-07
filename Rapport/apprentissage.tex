@@ -52,20 +52,8 @@ On applique ensuite la fonction subimage pour découper la zone de l'image à tr
 de la zone. Cette densité est ensuite normalisée par une division par la surface de la zone multipliée par 255.
 
 \paragraph{}
-Ensuite, il nous faut déterminer le profil type de chaque caractère. Nous avons désormais dix densités pour chacun des dix chiffres. Nous avons donc 
-décidé de calculer, pour chaque chiffre, la moyenne des densités calculées précédemment. Il nous suffira donc par la suite de comparer une nouvelle densité 
-avec ces moyennes pour déterminer la classe d'un caractère.
-\\
-\begin{lstlisting}
-moyenne = zeros(10,25);
-for i=1:10
-    moyenne(i,:) = mean(densites( ((i-1)*20+1):20*i ,:));
-end
-\end{lstlisting}
-
-\paragraph{}
-Le code \verb?densites(((i-1)*20+1):20*i ,:)? permet de sélectionner les dix densités appartenant à la même classe dans le vecteur densites.
-La variable moyenne est ensuite enregistrée dans le disque dur afin d'être réutilisée dans la partie suivante.
+Ce vecteur est ensuite stocké dans la matrice densites au rang correspondant au caractère traité. Cette matrice est enfin stockée dans le disque dur pour 
+être réutilisée par la partie décisionnaire du programme.
 
 
 
