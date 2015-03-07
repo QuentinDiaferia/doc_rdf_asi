@@ -10,7 +10,7 @@ La partie du programme extrayant les différents caractères de l'image est four
 \paragraph{}
 Nous avons choisi de nous intéresser à la méthode du zoning utilisant les densités de pixels. Pour cela, nous avons développé la fonction extraitDensite 
 ci-dessous.
-
+\\
 \begin{lstlisting}
 function [ densites ] = extraitDensite(img, n, m)
 	% On cree un vecteur qui contiendra les densites de chaque zone.
@@ -43,3 +43,8 @@ function [ densites ] = extraitDensite(img, n, m)
 	end
 end
 \end{lstlisting}
+
+\paragraph{}
+Cette fonction retourne un vecteur de taille n * m contenant les densités de chacune des n * m zones de l'image. Pour les calculer, une deuxième image 
+est créée dont les dimensions permettent une division en n * m zones. Pour cela, des pixels blancs sont ajoutés en bas et à droite de l'image. Cette pratique 
+cause une légère perte de précision du calcul, mais le simplifie notablement.
