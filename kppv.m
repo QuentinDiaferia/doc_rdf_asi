@@ -1,3 +1,8 @@
+% Cette fonction applique la méthode des k plus proches voisins afin de déterminer la classe d'un caractère.
+% - densitePoint : densité du point en traitement
+% - matDensites : matrice contenant les densités des classes
+% - k : nombre de plus proches voisins à considérer.
+
 function [ classe ] = kppv( densitePoint, matDensites, k )
     
     distance = zeros(200,1);
