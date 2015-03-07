@@ -12,17 +12,17 @@
 
 clear all;
 
-%%%%%%%%%%%%%%%%%%%% apprentissage %%%%%%%%%%%%%%%%%%%%%%%%%
-im = imread('app.tif'); % lecture fichier image d'apprentissage
+%%%%%%%%%%%%%%%%%%%% Apprentissage %%%%%%%%%%%%%%%%%%%%%%%%%
+im = imread('app.tif'); % Lecture du fichier image d'apprentissage.
 coordImages = extractionImages(im); 
 nbImageBaseApp = length(coordImages);
 sprintf('APPRENTISSAGE détection images OK : %d images detectées\n', nbImageBaseApp);
 
-densites=zeros(nbImageBaseApp, 25);
+densites = zeros(nbImageBaseApp, 25);
 
 for (iImage=1 : nbImageBaseApp)
     iImage;
-    % localisation et extraction des imagettes
+    % Localisation et extraction des imagettes.
     largeur = coordImages(iImage, 2) - coordImages(iImage, 1) - 2;
     hauteur = coordImages(iImage, 4) - coordImages(iImage, 3) - 2;
     x0 = coordImages(iImage, 1);
@@ -31,54 +31,59 @@ for (iImage=1 : nbImageBaseApp)
   
     % crop (supprimer les bords blancs)
     imageChiffreCroppee = crop(imageChiffre);    
-    %imagesc(imageChiffreCroppee); %afficher les imagettes de chiffres    
+    % imagesc(imageChiffreCroppee);  
     
-    %%%%%% ICI c'est à vous de Jouer ! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    % APPRENTISSAGE
+    % Calcul des densités
     densites(iImage, :) = extraitDensite(imageChiffreCroppee, 5, 5);
     
     % Astuce : la classe de l'image courante est donnée par : iClasse = fix((iImage-1)/20)
     sprintf('classe de l image %d : %d\n', iImage, fix((iImage-1)/20))
     
-    
+
     %%%%%%%%%%%%%%%%%%%%%%
 end
 
+% On calcule, pour chaque classe, la moyenne des dix densités calculées ci-dessus.
 moyenne = zeros(10,25);
-
 for i=1:10
     moyenne(i,:) = mean(densites( ((i-1)*20+1):20*i ,:));
 end
 
+% On enregistre les densites et leur moyenne pour reutilisation.
 save('moyenne.mat', 'moyenne');
 save('densites.mat', 'densites');
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% decision %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Decision %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
+
+% On récupère les deux variables moyenne et densites.
 load('moyenne.mat');
 load('densites.mat');
-imTest = imread('test.tif'); % lecture fichier image test
+imTest = imread('test.tif'); % Lecture du fichier image test
 coordImagesTest = extractionImages(imTest);
-length(coordImagesTest);
 nbImageBaseTest = length(coordImagesTest);
 
+% La matrice retour stockera toutes les classes déterminées.
 retour = zeros(nbImageBaseTest, 1);
 
 for (iImage=1 : nbImageBaseTest)
     largeur = coordImagesTest(iImage, 2) - coordImagesTest(iImage, 1) - 2;
     hauteur = coordImagesTest(iImage, 4) - coordImagesTest(iImage, 3) - 2;
     
-    % extraction image
+    % Extraction image
     imageChiffre = subimage(imTest, largeur, hauteur, coordImagesTest(iImage, 1), coordImagesTest(iImage, 3));
     
     % crop
     imageChiffreCroppee = crop(imageChiffre);    
-    %imagesc(imageChiffreCroppee); %afficher les imagettes de chiffres
+    % imagesc(imageChiffreCroppee);
     
-    %%%%%% ICI c'est à vous de Jouer !!!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % appliquer le modèle sauvegardé sur les chiffres de l'image de test ...
+    % PRISE DE DECISION
     
-    densite = extraitDensite(imageChiffreCroppee, 6, 6);
+    % On extrait les densités des zones de l'imagette.
+    densite = extraitDensite(imageChiffreCroppee, 5, 5);
+    
+    % Le but est de calculer la distance entre la densité qui vient d'être calculée et les densités moyennes des classes, afin de trouver la plus proche.
     distance = zeros(10,25);
     for i=1:10
         num = exp(-10*(abs(densite - moyenne(i) )));
@@ -91,7 +96,7 @@ for (iImage=1 : nbImageBaseTest)
     
     normes = zeros(10,1);
     for i=1:10
-        normes(i) = sqrt(sum(distance(i,:).^2)); % Calcul norme, sinon matlab plante
+        normes(i) = sqrt(sum(distance(i,:).^2)); % Calcul de la norme à la main, sinon matlab plante
     end
     
     retour(iImage) = find(normes == min(normes)) - 1;

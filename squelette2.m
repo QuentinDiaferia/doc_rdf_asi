@@ -13,22 +13,22 @@
 clear all;
 
 %%%%%%%%%%%%%%%%%%%% Apprentissage %%%%%%%%%%%%%%%%%%%%%%%%%
-im = imread('app.tif'); % lecture fichier image d'apprentissage
+im = imread('app.tif'); % Lecture du fichier image d'apprentissage.
 coordImages = extractionImages(im); 
 nbImageBaseApp = length(coordImages);
 sprintf('APPRENTISSAGE détection images OK : %d images detectées\n', nbImageBaseApp);
 
-%preparation perceptron
+% Préparation du perceptron
 bias = -1;
 coeff = 0.7;
 rand('state',sum(100*clock));
 weights = -1*2.*rand(200,1);
 
-densites=zeros(nbImageBaseApp, 36);
+densites = zeros(nbImageBaseApp, 36);
 
 for (iImage=1 : nbImageBaseApp)
     iImage;
-    % localisation et extraction des imagettes
+    % Localisation et extraction des imagettes.
     largeur = coordImages(iImage, 2) - coordImages(iImage, 1) - 2;
     hauteur = coordImages(iImage, 4) - coordImages(iImage, 3) - 2;
     x0 = coordImages(iImage, 1);
@@ -37,9 +37,10 @@ for (iImage=1 : nbImageBaseApp)
   
     % crop (supprimer les bords blancs)
     imageChiffreCroppee = crop(imageChiffre);    
-    %imagesc(imageChiffreCroppee); %afficher les imagettes de chiffres    
+    % imagesc(imageChiffreCroppee);  
     
-    %%%%%% ICI c'est à vous de Jouer ! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % APPRENTISSAGE
+    % Calcul des densités
     temp = extraitDensite(imageChiffreCroppee, 6, 6)
     densites(iImage, :) = temp';
     
