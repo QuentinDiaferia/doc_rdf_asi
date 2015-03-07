@@ -2,10 +2,8 @@
 
 \paragraph{}
 Cette étape consisite à fournir au programme un jeu de caractères où chaque caractère est identifié : le programme sait s'il a affaire à un 0, un 1, etc. 
-Ce jeu va lui permettre de reconnaître les caractéristiques de chaque caractère et donc de les reconnaître par la suite. 
-
-\paragraph{}
-La partie du programme extrayant les différents caractères de l'image est fournie par le sujet. 
+Ce jeu va lui permettre de reconnaître les caractéristiques de chaque caractère et donc de les reconnaître par la suite. La partie du programme extrayant 
+les différents caractères de l'image est fournie par le sujet. 
 
 \paragraph{}
 Nous avons choisi de nous intéresser à la méthode du zoning utilisant les densités de pixels. Pour cela, nous avons développé la fonction extraitDensite 
@@ -48,3 +46,29 @@ end
 Cette fonction retourne un vecteur de taille n * m contenant les densités de chacune des n * m zones de l'image. Pour les calculer, une deuxième image 
 est créée dont les dimensions permettent une division en n * m zones. Pour cela, des pixels blancs sont ajoutés en bas et à droite de l'image. Cette pratique 
 cause une légère perte de précision du calcul, mais le simplifie notablement.
+
+\paragraph{}
+On applique ensuite la fonction subimage pour découper la zone de l'image à traiter, et on calcule la densité de cette zone par une simple somme des pixels 
+de la zone. Cette densité est ensuite normalisée par une division par la surface de la zone multipliée par 255.
+
+\paragraph{}
+Ensuite, il nous faut déterminer le profil type de chaque caractère. Nous avons désormais dix densités pour chacun des dix chiffres. Nous avons donc 
+décidé de calculer, pour chaque chiffre, la moyenne des densités calculées précédemment. Il nous suffira donc par la suite de comparer une nouvelle densité 
+avec ces moyennes pour déterminer la classe d'un caractère.
+\\
+\begin{lstlisting}
+moyenne = zeros(10,25);
+for i=1:10
+    moyenne(i,:) = mean(densites( ((i-1)*20+1):20*i ,:));
+end
+\end{lstlisting}
+
+\paragraph{}
+Le code \verb?densites(((i-1)*20+1):20*i ,:)? permet de sélectionner les dix densités appartenant à la même classe dans le vecteur densites.
+La variable moyenne est ensuite enregistrée dans le disque dur afin d'être réutilisée dans la partie suivante.
+
+
+
+
+
+
