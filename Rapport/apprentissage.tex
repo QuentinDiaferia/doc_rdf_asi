@@ -13,29 +13,33 @@ ci-dessous.
 
 \begin{lstlisting}
 function [ densites ] = extraitDensite(img, n, m)
-    densites = zeros(n*m, 1);
-    [lignes1, colonnes1] = size(img);
-    pasLignes = ceil(lignes1/n);
-    pasColonnes = ceil(colonnes1/m);
-    
-    imgCor = ones(pasLignes*n, pasColonnes*m);
-    imgCor = 255*imgCor;
-    
-    for i=1:lignes1
-        for j=1:colonnes1
-            imgCor(i,j) = img(i, j);
-        end
-    end
-    i = 1;
-    j = 1;
-    
-    iDen = 1;
-    for i=1:pasLignes:pasLignes*n
-        for j=1:pasColonnes:pasColonnes*m
-            img2 = subimage(imgCor, pasColonnes-1, pasLignes-1, j, i);
-            densites(iDen) = sum(sum(img2)) / (pasColonnes*pasLignes*255);
-            iDen = iDen+1;
-        end
-    end
+	% On cree un vecteur qui contiendra les densites de chaque zone.
+	densites = zeros(n*m, 1);
+	% On cree une seconde image dont les dimensions sont corrigees afin de correspondre au nombre de zones demandees.
+	[lignes1, colonnes1] = size(img);
+	pasLignes = ceil(lignes1/n);
+	pasColonnes = ceil(colonnes1/m);
+	% On remplit cette image de blanc.
+	imgCor = ones(pasLignes*n, pasColonnes*m);
+	imgCor = 255*imgCor;
+	% On copie les valeurs de l'image initiale dans la nouvelle.
+	for i=1:lignes1
+		for j=1:colonnes1
+			imgCor(i,j) = img(i, j);
+		end
+	end
+	% Initialisation des compteurs pour le calcul de la densite.
+	i = 1;
+	j = 1;
+	iDen = 1;
+	for i=1:pasLignes:pasLignes*n
+		for j=1:pasColonnes:pasColonnes*m
+			% On extrait la zone de l'image a traiter.
+			img2 = subimage(imgCor, pasColonnes-1, pasLignes-1, j, i);
+			% Calcul de la densite.
+			densites(iDen) = sum(sum(img2)) / (pasColonnes*pasLignes*255);
+			iDen = iDen+1;
+		end
+	end
 end
 \end{lstlisting}
