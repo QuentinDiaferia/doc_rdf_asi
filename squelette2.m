@@ -4,25 +4,15 @@
 %%%%%   Département ASI - INSA de Rouen 		%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-% rapport : moins de 10 pages
-% pas les figures du sujet
-% nos données, nos valeurs, nos problèmes
-% insister sur notre grain de sel et nos analyses
-% ANALYSE DES RESULTATS
 
 clear all;
 
 %%%%%%%%%%%%%%%%%%%% Apprentissage %%%%%%%%%%%%%%%%%%%%%%%%%
+
 im = imread('app.tif'); % Lecture du fichier image d'apprentissage.
 coordImages = extractionImages(im); 
 nbImageBaseApp = length(coordImages);
 sprintf('APPRENTISSAGE détection images OK : %d images detectées\n', nbImageBaseApp);
-
-% Préparation du perceptron
-bias = -1;
-coeff = 0.7;
-rand('state',sum(100*clock));
-weights = -1*2.*rand(200,1);
 
 densites = zeros(nbImageBaseApp, 36);
 
@@ -49,31 +39,14 @@ for (iImage=1 : nbImageBaseApp)
 
 end
 
-iterations = 1000
-
-for i = 1:iterations
-     out = zeros(4,1);
-     for j = 1:200
-         
-         y = bias * weights(1,1);
-         
-         y = norm(densites(j)) * weights(j,1);
-         
-          out(j) = 1/(1+exp(-y));
-          delta = desired_out(j)-out(j);
-          weights(1,1) = weights(1,1)+coeff*bias*delta;
-          
-          weights(2,1) = weights(2,1)+coeff*input(j,1)*delta;
-          weights(3,1) = weights(3,1)+coeff*input(j,2)*delta;
-     end
-end
-
+% On enregistre la matrice pour l'étape suivante.
 save('densites.mat', 'densites');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Décision %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 clear all;
-load('densites.mat');
-imTest = imread('test.tif'); % lecture fichier image test
+load('densites.mat'); % On charge la matrice densites
+imTest = imread('test.tif'); % Lecture du fichier image test
 coordImagesTest = extractionImages(imTest);
 length(coordImagesTest);
 nbImageBaseTest = length(coordImagesTest);
@@ -84,22 +57,22 @@ for (iImage=1 : nbImageBaseTest)
     largeur = coordImagesTest(iImage, 2) - coordImagesTest(iImage, 1) - 2;
     hauteur = coordImagesTest(iImage, 4) - coordImagesTest(iImage, 3) - 2;
     
-    % extraction image
+    % Extraction image
     imageChiffre = subimage(imTest, largeur, hauteur, coordImagesTest(iImage, 1), coordImagesTest(iImage, 3));
     
     % crop
     imageChiffreCroppee = crop(imageChiffre);    
-    %imagesc(imageChiffreCroppee); %afficher les imagettes de chiffres
    
-    %%%%%% ICI c'est à vous de Jouer !!!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % appliquer le modèle sauvegardé sur les chiffres de l'image de test ...
-    
+    % PRISE DE DECISION
+    % On commence par extraite la densité de l'imagette actuelle, comme dans l'étape précédente.    
     densite = extraitDensite(imageChiffreCroppee, 6, 6);
     
+    % On applique la fonction kppv qui retourne la classe la plus représentée parmi les k plus proches voisins.
     classe = kppv(densite, densites, 1);
     retour(iImage) = classe;
 end
 
+% On représente le vecteur résultat sous forme d'une matrice 10 * 10, comme l'image de test.
 res = reshape(retour, 10, 10)';
 
 %%%%%%%%% Calcul des performances %%%%%%%%
